@@ -23,8 +23,41 @@ public class Main {
         int[] intArray = new int[]{0, 2, 0, 1, 2, 1, 0, 2, 3};
         saveArrayToFile(intArray, "array_file");
 
+
+        // Написать функцию, добавляющую префикс к каждому из набора файлов,
+        // названия которых переданы ей в качестве параметров через пробел.
+        String files = "array_file file2 file3 file4";
+        try {
+            System.out.println(addPrefixToFileName("somePrefix_", files));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 
+
+    public static String addPrefixToFileName(String prefix, String fileNamesSeparatedBySpace) throws IOException {
+        String[] files = fileNamesSeparatedBySpace.split(" ");
+        StringBuilder result = new StringBuilder();
+        for (String fileName : files) {
+            File file = new File(fileName);
+            if (file.exists() && file.isFile()) {
+                Path newName = Files.move(file.toPath(),
+                        Path.of(prefix + file.getName()),
+                        StandardCopyOption.REPLACE_EXISTING);
+
+                result.append(file.getName())
+                        .append(" renamed to ")
+                        .append(newName)
+                        .append('\n');
+            } else {
+                result.append(file.getName())
+                        .append(" not exist")
+                        .append('\n');
+            }
+        }
+        return result.toString();
+    }
 
     public static void saveArrayToFile(int[] arr, String fileName) {
         try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileName))) {
